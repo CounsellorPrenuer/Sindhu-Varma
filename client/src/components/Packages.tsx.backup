@@ -1,0 +1,515 @@
+import { useEffect, useState } from "react";
+import { useToast } from "@/hooks/use-toast";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Check, X, Sparkles } from "lucide-react";
+import { CustomerDetailsModal } from "@/components/CustomerDetailsModal";
+
+interface Feature {
+  text: string;
+  included: boolean;
+}
+
+interface Package {
+  planName: string;
+  price: string;
+  features: Feature[];
+  isPremium: boolean;
+}
+
+interface CategoryData {
+  standard: Package;
+  premium: Package;
+}
+
+type PricingData = {
+  [key: string]: CategoryData;
+};
+
+export default function Packages() {
+  const { toast } = useToast();
+  const [isVisible, setIsVisible] = useState(false);
+  const [activeTab, setActiveTab] = useState("8-9 STUDENTS");
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedPackage, setSelectedPackage] = useState<{
+    planName: string;
+    amount: number;
+  } | null>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setIsVisible(true);
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    const element = document.getElementById("packages");
+    if (element) observer.observe(element);
+
+    return () => observer.disconnect();
+  }, []);
+
+  const handleBooking = async (planName: string, priceString: string) => {
+    const amount = parseInt(priceString.replace(/[₹,]/g, ""));
+    setSelectedPackage({ planName, amount });
+    setModalOpen(true);
+  };
+
+  const pricingData: PricingData = {
+    "8-9 STUDENTS": {
+      standard: {
+        planName: "Discover",
+        price: "₹5,500",
+        features: [
+          { text: "Individual career assessment", included: true },
+          { text: "Psychometric & personality tests", included: true },
+          { text: "Interactive video sessions", included: true },
+          { text: "Parental guidance session", included: true },
+          { text: "One-on-one mentoring", included: false },
+          { text: "College selection support", included: false },
+        ],
+        isPremium: false,
+      },
+      premium: {
+        planName: "Discover Plus+",
+        price: "₹15,000",
+        features: [
+          { text: "Individual career assessment", included: true },
+          { text: "Psychometric & personality tests", included: true },
+          { text: "Interactive video sessions", included: true },
+          { text: "Parental guidance session", included: true },
+          { text: "One-on-one mentoring (4 sessions)", included: true },
+          { text: "College selection support", included: true },
+          { text: "Priority email support", included: true },
+          { text: "Personalized career roadmap", included: true },
+        ],
+        isPremium: true,
+      },
+    },
+    "10-12 STUDENTS": {
+      standard: {
+        planName: "Achieve Online",
+        price: "₹5,999",
+        features: [
+          { text: "Stream selection guidance", included: true },
+          { text: "Career counseling sessions", included: true },
+          { text: "College application support", included: true },
+          { text: "Scholarship guidance", included: true },
+          { text: "Personalized mentoring", included: false },
+          { text: "Interview preparation", included: false },
+        ],
+        isPremium: false,
+      },
+      premium: {
+        planName: "Achieve Plus+",
+        price: "₹10,599",
+        features: [
+          { text: "Stream selection guidance", included: true },
+          { text: "Career counseling sessions", included: true },
+          { text: "College application support", included: true },
+          { text: "Scholarship guidance", included: true },
+          { text: "Personalized mentoring (6 sessions)", included: true },
+          { text: "Interview preparation", included: true },
+          { text: "Entrance exam guidance", included: true },
+          { text: "Resume building workshop", included: true },
+        ],
+        isPremium: true,
+      },
+    },
+    "COLLEGE GRADUATES": {
+      standard: {
+        planName: "Ascend Online",
+        price: "₹6,499",
+        features: [
+          { text: "Career path assessment", included: true },
+          { text: "Job search strategies", included: true },
+          { text: "Resume & cover letter review", included: true },
+          { text: "LinkedIn profile optimization", included: true },
+          { text: "Mock interviews", included: false },
+          { text: "Salary negotiation coaching", included: false },
+        ],
+        isPremium: false,
+      },
+      premium: {
+        planName: "Ascend Plus+",
+        price: "₹10,599",
+        features: [
+          { text: "Career path assessment", included: true },
+          { text: "Job search strategies", included: true },
+          { text: "Resume & cover letter review", included: true },
+          { text: "LinkedIn profile optimization", included: true },
+          { text: "Mock interviews (3 sessions)", included: true },
+          { text: "Salary negotiation coaching", included: true },
+          { text: "Personal branding workshop", included: true },
+          { text: "3-month job search support", included: true },
+        ],
+        isPremium: true,
+      },
+    },
+    "WORKING PROFESSIONALS": {
+      standard: {
+        planName: "Ascend Online",
+        price: "₹6,499",
+        features: [
+          { text: "Career transition planning", included: true },
+          { text: "Skills gap analysis", included: true },
+          { text: "Professional networking tips", included: true },
+          { text: "Industry insights session", included: true },
+          { text: "Executive coaching", included: false },
+          { text: "Leadership development", included: false },
+        ],
+        isPremium: false,
+      },
+      premium: {
+        planName: "Ascend Plus+",
+        price: "₹10,599",
+        features: [
+          { text: "Career transition planning", included: true },
+          { text: "Skills gap analysis", included: true },
+          { text: "Professional networking tips", included: true },
+          { text: "Industry insights session", included: true },
+          { text: "Executive coaching (4 sessions)", included: true },
+          { text: "Leadership development program", included: true },
+          { text: "Personal brand strategy", included: true },
+          { text: "Career advancement roadmap", included: true },
+        ],
+        isPremium: true,
+      },
+    },
+  };
+
+  const tabs = Object.keys(pricingData);
+  const currentData = pricingData[activeTab];
+
+  const PricingCard = ({ packageData, delay = 0 }: { packageData: Package; delay?: number }) => (
+    try {
+      const response = await fetch("/api/payment/create-order", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          planName,
+          category: activeTab,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to create order");
+      }
+
+      const { orderId, amount, currency, keyId } = await response.json();
+
+      const options = {
+        key: keyId,
+        amount: amount,
+        currency: currency,
+        name: "Lanista Virtus",
+        description: `${planName} Package`,
+        order_id: orderId,
+        handler: async function (response: any) {
+          try {
+            const verifyResponse = await fetch("/api/payment/verify", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+              }),
+            });
+
+            if (verifyResponse.ok) {
+              toast({
+                title: "Payment Successful!",
+                description: `Thank you for booking ${planName}. You will receive a confirmation email shortly.`,
+              });
+            } else {
+              toast({
+                title: "Payment Verification Failed",
+                description: "Please contact support for assistance.",
+                variant: "destructive",
+              });
+            }
+          } catch (error) {
+            toast({
+              title: "Error",
+              description: "Failed to verify payment. Please contact support.",
+              variant: "destructive",
+            });
+          }
+        },
+        prefill: {
+          name: "",
+          email: "",
+          contact: "",
+        },
+        theme: {
+          color: "#4A148C",
+        },
+      };
+
+      const razorpayInstance = new (window as any).Razorpay(options);
+      razorpayInstance.open();
+    } catch (error) {
+      console.error("Payment error:", error);
+      toast({
+        title: "Error",
+        description: "Failed to initiate payment. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const pricingData: PricingData = {
+    "8-9 STUDENTS": {
+      standard: {
+        planName: "Discover",
+        price: "₹5,500",
+        features: [
+          { text: "Psychometric assessment to measure your interests", included: true },
+          { text: "1 career counselling session with Mentoria's expert career coaches", included: true },
+          { text: "Lifetime access to Knowledge Gateway", included: true },
+          { text: "Invites to live webinars by industry experts", included: true },
+          { text: "Customized reports after each session with education pathways", included: false },
+          { text: "Guidance on studying abroad", included: false },
+          { text: "CV building during internship/graduation", included: false },
+        ],
+        isPremium: false,
+      },
+      premium: {
+        planName: "Discover Plus+",
+        price: "₹15,000",
+        features: [
+          { text: "Psychometric assessments to measure your interests, personality and abilities", included: true },
+          { text: "8 career counselling sessions (1 every year) with Mentoria's expert career coaches until graduation", included: true },
+          { text: "Lifetime access to Knowledge Gateway", included: true },
+          { text: "Invites to live webinars by industry experts", included: true },
+          { text: "Customized reports after each session with education pathways", included: true },
+          { text: "Guidance on studying abroad", included: true },
+          { text: "CV building during internship/graduation", included: true },
+        ],
+        isPremium: true,
+      },
+    },
+    "10-12 STUDENTS": {
+      standard: {
+        planName: "Achieve Online",
+        price: "₹5,999",
+        features: [
+          { text: "Psychometric assessment to measure your interests, personality and abilities", included: true },
+          { text: "1 career counselling session", included: true },
+          { text: "Lifetime access to Knowledge Gateway", included: true },
+          { text: "Pre-recorded webinars by industry experts", included: true },
+          { text: "Customized reports after each session with education pathways", included: false },
+          { text: "Guidance on studying abroad", included: false },
+          { text: "CV reviews during internship/graduation", included: false },
+        ],
+        isPremium: false,
+      },
+      premium: {
+        planName: "Achieve Plus+",
+        price: "₹10,599",
+        features: [
+          { text: "Psychometric assessment to measure your interests, personality and abilities", included: true },
+          { text: "4 career counselling sessions", included: true },
+          { text: "Lifetime access to Knowledge Gateway", included: true },
+          { text: "Attend live webinars by industry experts", included: true },
+          { text: "Customized reports after each session with education pathways", included: true },
+          { text: "Guidance on studying abroad", included: true },
+          { text: "CV reviews during internship/graduation", included: true },
+        ],
+        isPremium: true,
+      },
+    },
+    "COLLEGE GRADUATES": {
+      standard: {
+        planName: "Ascend Online",
+        price: "₹6,499",
+        features: [
+          { text: "Psychometric assessment to measure your interests, personality and abilities", included: true },
+          { text: "1 career counselling session", included: true },
+          { text: "Lifetime access to Knowledge Gateway", included: true },
+          { text: "Pre-recorded webinars by industry experts", included: true },
+          { text: "Customized reports after each session with information on certificate/online courses", included: false },
+          { text: "Guidance on studying abroad", included: false },
+          { text: "CV reviews for job application", included: false },
+        ],
+        isPremium: false,
+      },
+      premium: {
+        planName: "Ascend Plus+",
+        price: "₹10,599",
+        features: [
+          { text: "Psychometric assessment to measure your interests, personality and abilities", included: true },
+          { text: "3 career counselling sessions", included: true },
+          { text: "Lifetime access to Knowledge Gateway", included: true },
+          { text: "Attend live webinars by industry experts", included: true },
+          { text: "Customized reports after each session with information on certificate/online courses", included: true },
+          { text: "Guidance on studying abroad", included: true },
+          { text: "CV reviews for job application", included: true },
+        ],
+        isPremium: true,
+      },
+    },
+    "WORKING PROFESSIONALS": {
+      standard: {
+        planName: "Ascend Online",
+        price: "₹6,499",
+        features: [
+          { text: "Psychometric assessment to measure your interests, personality and abilities", included: true },
+          { text: "1 career counselling session", included: true },
+          { text: "Lifetime access to Knowledge Gateway", included: true },
+          { text: "Pre-recorded webinars by industry experts", included: true },
+          { text: "Customized reports after each session with information on certificate/online courses", included: false },
+          { text: "Guidance on studying abroad", included: false },
+          { text: "CV reviews for job application", included: false },
+        ],
+        isPremium: false,
+      },
+      premium: {
+        planName: "Ascend Plus+",
+        price: "₹10,599",
+        features: [
+          { text: "Psychometric assessment to measure your interests, personality and abilities", included: true },
+          { text: "2 career counselling sessions", included: true },
+          { text: "Lifetime access to Knowledge Gateway", included: true },
+          { text: "Attend live webinars by industry experts", included: true },
+          { text: "Customized reports after each session with information on certificate/online courses", included: true },
+          { text: "Guidance on studying abroad", included: true },
+          { text: "CV reviews for job application", included: true },
+        ],
+        isPremium: true,
+      },
+    },
+  };
+
+  const tabs = Object.keys(pricingData);
+  const currentData = pricingData[activeTab];
+
+  const PricingCard = ({ packageData, delay = 0 }: { packageData: Package; delay?: number }) => (
+    <Card 
+      className={`hover-elevate transition-all duration-500 group relative overflow-hidden shadow-xl hover:shadow-2xl animate-fade-in-up ${
+        packageData.isPremium ? 'border-primary border-2 scale-105' : ''
+      }`}
+      style={{ animationDelay: `${delay}ms` }}
+      data-testid={`card-package-${packageData.planName.toLowerCase().replace(/\s+/g, '-')}`}
+    >
+      {packageData.isPremium && (
+        <div className="absolute top-0 right-0 bg-gradient-to-br from-primary to-purple-600 text-white px-4 py-1 text-xs font-semibold flex items-center gap-1 rounded-bl-lg z-10">
+          <Sparkles className="h-3 w-3" />
+          PREMIUM
+        </div>
+      )}
+      
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+      
+      <CardHeader className="relative pb-4">
+        <CardTitle className="text-2xl sm:text-3xl font-serif group-hover:text-primary transition-colors duration-300">
+          {packageData.planName}
+        </CardTitle>
+        <CardDescription className="text-sm sm:text-base mt-2">
+          {packageData.isPremium ? 'Complete Package' : 'Standard Package'}
+        </CardDescription>
+      </CardHeader>
+      
+      <CardContent className="relative">
+        <div className="mb-6 sm:mb-8">
+          <span className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent">
+            {packageData.price}
+          </span>
+        </div>
+        
+        <ul className="space-y-3 sm:space-y-4">
+          {packageData.features.map((feature, index) => (
+            <li key={index} className="flex items-start gap-3 group/item">
+              <div className={`flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center mt-0.5 ${
+                feature.included 
+                  ? 'bg-primary/10 group-hover/item:bg-primary/20' 
+                  : 'bg-muted'
+              } transition-colors`}>
+                {feature.included ? (
+                  <Check className="h-3 w-3 text-primary" />
+                ) : (
+                  <X className="h-3 w-3 text-muted-foreground" />
+                )}
+              </div>
+              <span className={`text-sm sm:text-base leading-relaxed ${
+                feature.included ? 'text-foreground/80' : 'text-muted-foreground line-through'
+              }`}>
+                {feature.text}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </CardContent>
+      
+      <CardFooter className="relative pt-6">
+        <Button
+          className="w-full group/btn relative overflow-hidden"
+          onClick={() => handleBooking(packageData.planName, packageData.price)}
+          data-testid={`button-buy-${packageData.planName.toLowerCase().replace(/\s+/g, '-')}`}
+        >
+          <span className="relative z-10">BUY NOW</span>
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover/btn:translate-x-full transition-transform duration-700" />
+        </Button>
+      </CardFooter>
+    </Card>
+  );
+
+  return (
+    <section id="packages" className="py-16 sm:py-20 lg:py-32 bg-gradient-to-b from-muted/30 to-background relative overflow-hidden">
+      <div className="absolute inset-0">
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-400/10 rounded-full blur-3xl" />
+      </div>
+      
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+        <div className={`text-center mb-12 sm:mb-16 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+          <div className="inline-block mb-4">
+            <span className="text-sm font-semibold text-primary uppercase tracking-wider">Pricing Plans</span>
+          </div>
+          <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold mb-4 sm:mb-6" data-testid="text-packages-title">
+            Choose Your Perfect Package
+          </h2>
+          <p className="text-lg sm:text-xl text-foreground/70 max-w-3xl mx-auto leading-relaxed">
+            Select a category that matches your profile and discover the best plan for your journey
+          </p>
+        </div>
+
+        {/* Tab Selector */}
+        <div className={`mb-12 sm:mb-16 transition-all duration-1000 delay-200 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+          <div className="flex flex-wrap justify-center gap-2 sm:gap-3 lg:gap-4">
+            {tabs.map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`px-4 sm:px-6 lg:px-8 py-3 sm:py-4 rounded-lg sm:rounded-xl font-semibold text-xs sm:text-sm lg:text-base transition-all duration-300 ${
+                  activeTab === tab
+                    ? 'bg-gradient-to-r from-primary to-purple-600 text-white shadow-lg shadow-primary/30 scale-105'
+                    : 'bg-card text-foreground/70 hover:bg-card/80 hover:text-foreground hover-elevate'
+                }`}
+                data-testid={`tab-${tab.toLowerCase().replace(/\s+/g, '-')}`}
+              >
+                {tab}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Pricing Cards */}
+        <div className="grid md:grid-cols-2 gap-6 sm:gap-8 lg:gap-10 max-w-5xl mx-auto">
+          <PricingCard packageData={currentData.standard} delay={0} />
+          <PricingCard packageData={currentData.premium} delay={200} />
+        </div>
+      </div>
+    </section>
+  );
+}

@@ -1,0 +1,122 @@
+Of course. This is an excellent submission with a clear brand identity, detailed content, and specific design requests. The prompt will focus on creating an elegant, minimalist website that reflects the "Lanista Virtus" brand and Sindhu Varma's expertise as an NLP Coach and corporate trainer.
+
+Here is the detailed and comprehensive prompt for the Replit agent.
+
+Replit Agent Prompt: Create an Elegant Coaching Website for Sindhu Varma (Lanista Virtus)
+You are an expert full-stack web developer agent. Your mission is to build a highly elegant, modern, and fully responsive website for Sindhu Varma, Founder of Lanista Training Consultancy, and her brand Lanista Virtus.
+
+Primary Goal: Your design must be inspired by the polished UI/UX of the leadcrestconsulting.com example but adapted to be minimalist and elegant, strictly following the client's "Purple and related colours" and "minimum content" directives. The website must effectively showcase her expertise as a Certified NLP Coach and Corporate Trainer. The final product must be fully functional, including a prominent testimonials section and live Razorpay integration.
+
+## 1. Core Technical Stack & Setup
+Framework: React with Vite.
+
+Styling: Tailwind CSS.
+
+File Structure: Organize into src/components (for Navbar, Hero, ServiceCard, Footer, etc.) and src/assets for the logo and images.
+
+## 2. Design Language & Inspiration Analysis
+Adhere to the modern design principles of the leadcrestconsulting.com example, with a focus on elegance and minimalism.
+
+Layout & Spacing: Use clean, uncluttered layouts with generous whitespace to create a sophisticated and calming user experience.
+
+Color Palette: The client requested "Purple and related colours." Create a sophisticated and professional palette.
+
+Primary Purple: Use a deep, rich purple (e.g., #4A148C) for headlines, key UI elements, and dark sections.
+
+Accent Lilac/Lavender: Use a soft lavender or lilac (e.g., #E1BEE7) for backgrounds, highlights, and subtle gradients.
+
+Contrast Color: Use White (#FFFFFF) for text on dark backgrounds to ensure high readability and a clean aesthetic.
+
+UI Elements: Implement Glassmorphism, soft shadows, and smooth, subtle hover effects on all interactive elements.
+
+Animations: Use gentle, slow on-scroll fade-in animations.
+
+## 3. Branding & Core Identity
+Brand Name: Lanista Virtus
+
+Founder's Name: Sindhu Varma
+
+Logo: Use the image from this Google Drive link: https://drive.google.com/open?id=1Fn7nCvCQYqBdnfbEveAwGdin8cPD4LyS
+
+Profile Picture: Use the professional headshot from this Google Drive link for the "About Me" section: https://drive.google.com/file/d/1RcqABrX_exqus4W-2-hS7_EnLs-q0IT5/view?usp=drive_link
+
+Typography: Use an elegant and modern font pairing like "Playfair Display" for headings and "Montserrat" for body text.
+
+## 4. Website Structure & Content (Single-Page Scroller)
+Build the website as a single, smooth-scrolling page with clear, concise sections.
+
+a. Navbar
+Style: Sticky, semi-transparent with a blur effect.
+
+Content: Logo (left); Links: About, Expertise, Testimonials, Contact; CTA Button (right): "Book a Session".
+
+b. Hero Section
+Layout: A minimalist, full-width section.
+
+Content:
+
+Main Headline: Empowering Your Personal & Professional Evolution.
+
+Sub-headline: "Certified NLP Coaching and Corporate Training to help you overcome barriers and achieve your goals. Founded by Sindhu Varma."
+
+CTA Button: "Begin Your Transformation".
+
+c. About Me Section
+Content: Use the detailed bio she provided. Format it into clean, readable paragraphs next to her professional profile picture.
+
+Highlights: Create a small, visually distinct sub-section to list her key roles: Certified NLP Coach, Corporate Trainer, Certified Career Counsellor, Entrepreneur.
+
+d. Expertise Section
+Headline: My Expertise as a Life Coach
+
+Layout: A clean grid of premium cards for her coaching focus areas.
+
+Content: Create a card for each of the bullet points she provided, such as Anxiety and Depression, Feeling Stuck, Fears and Phobias, Relationship Issues, etc.
+
+e. Testimonials Section
+Headline: What My Clients Say
+
+Layout: A modern, elegant carousel or slider.
+
+Content: Use the five detailed testimonials she provided. Each slide in the carousel should feature the quote and the "Event" (e.g., "Empower Self and Others – NLP 2 Day program").
+
+f. Packages & Payments Section
+Headline: Begin Your Journey with Me
+
+Layout: A two-card pricing table.
+
+Content (Placeholder Packages):
+
+Personal Coaching Session: "A one-on-one session focused on overcoming personal barriers and achieving life goals."
+
+Career Guidance Package: "A comprehensive program for students and professionals seeking clarity and direction."
+
+Payment Integration: Each card must have a "Book Now" button integrated with Razorpay.
+
+g. Blog, Contact, and Footer
+Blog: A section for 3 placeholder blog posts.
+
+Contact Section: A form next to her details: lanistatrainingconsultancy@gmail.com, +91 97460 84925, and social media icons.
+
+Footer: A comprehensive footer with links and social media handles.
+
+LinkedIn: https://www.linkedin.com/in/sindhuvarma-unstuckcoach/
+
+Instagram: https://www.instagram.com/sindhu_lifecoach21
+
+Facebook: https://www.facebook.com/profile.php?id=100065272189422
+
+## 5. Key Functionality & Integrations
+Razorpay Integration: The package buttons must trigger the Razorpay modal. Use the live Razorpay credentials you provide via Replit Secrets.
+
+Contact Form: Implement validation and a "Thank you!" success message.
+
+Responsiveness: Flawless display on all devices is mandatory.
+
+SEO & Metadata:
+
+Title: Lanista Virtus - NLP Coaching & Corporate Training by Sindhu Varma
+
+Meta Description: Sindhu Varma, a Certified NLP Coach and Corporate Trainer, offers expert life coaching, career guidance, and therapy sessions through Lanista Virtus.
+
+Keywords: NLP coach, Sindhu Varma, Lanista Virtus, corporate trainer, life coach, career counsellor, anxiety coaching, phobia therapy.
